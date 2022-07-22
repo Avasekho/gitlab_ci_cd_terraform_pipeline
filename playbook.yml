@@ -12,15 +12,3 @@
       - awscli
       - docker.io
       state: present
-
-  - name: Retrieve AWS authentication token
-    shell: "aws ecr get-login --no-include-email --region us-east-1 | bash"
-
-  - name: deploy container
-    docker_container:
-      name: webapp
-      image: 373000727222.dkr.ecr.us-east-1.amazonaws.com/webapp:website-1.0
-      state: started
-      restart: yes
-      ports:
-      - "80:80"
