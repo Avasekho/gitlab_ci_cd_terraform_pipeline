@@ -15,7 +15,7 @@ locals {
   ami                    = "ami-08d4ac5b634553e16" # Ubuntu Server 20.04 LTS
   instance_type          = "t2.micro"
   key_name               = "us-east-1-key"
-  private_key_path       = "./us-east-1-key.pem"
+#  private_key_path       = "./us-east-1-key.pem"
 }
 
 resource "aws_instance" "web_server" {
@@ -30,17 +30,17 @@ resource "aws_instance" "web_server" {
   }
 
 # wait fot ssh available on remote host
-  connection {
-    type     = "ssh"
-    user     = "ubuntu"
-    private_key = file(local.private_key_path)
-    host     = self.public_ip
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "echo 'Build Server - SSH is UP!'",
-    ]
-  }
+#  connection {
+#    type     = "ssh"
+#    user     = "ubuntu"
+#    private_key = file(local.private_key_path)
+#    host     = self.public_ip
+#  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      "echo 'Build Server - SSH is UP!'",
+#    ]
+#  }
 }
 
 # Create security group
