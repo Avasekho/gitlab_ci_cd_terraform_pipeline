@@ -1,0 +1,26 @@
+---
+- name: install packages
+  hosts: all
+  remote_user: ubuntu
+  become: yes
+
+  tasks:
+  - name: Ensure packages are installed
+    apt:
+      update_cache: yes
+      pkg:
+      - awscli
+      - docker.io
+      state: present
+
+  - name: Retrieve AWS authentication token
+    shell: "aws ecr get-login --no-include-email --region us-east-1 | xargs"
+
+  - name: deploy container
+    docker_container:
+    name: webapp
+    image: 373000727222.dkr.ecr.us-east-1.amazonaws.com/webapp:website-1.0
+    state: started
+    restart: yes
+    ports:
+     - "80:80"
