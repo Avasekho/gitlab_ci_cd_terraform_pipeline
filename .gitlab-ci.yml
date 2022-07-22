@@ -11,7 +11,7 @@ terraform_build:
   script:
     - terraform init
     - terraform plan
-    - terraform apply
+    - terraform apply -auto-approve
 
 build_image:
   stage: build_image
