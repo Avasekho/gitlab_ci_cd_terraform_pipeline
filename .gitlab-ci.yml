@@ -1,36 +1,7 @@
 stages:
-  - set_up_infrastructure
-  - build_image
-  - deploy
-
-terraform_build:
-  image: hashicorp/terraform:latest
-  stage: set_up_infrastructure
-  before_script:
-    - cp $SSH_PRIVATE_KEY ./us-east-1-key.pem
-  script:
-    - terraform init
-    - terraform plan
-    - terraform apply -auto-approve
-  artifacts:
-    paths:
-      - inventory
-  
-build_image:
-  stage: build_image
-  image: docker:20.10.16
-  services:
-    - docker:20.10.16-dind
-  before_script:
-    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 373000727222.dkr.ecr.us-east-1.amazonaws.com
-  script:
-    - docker build -t 373000727222.dkr.ecr.us-east-1.amazonaws.com/webapp:website-1.0 .
-    - docker push 373000727222.dkr.ecr.us-east-1.amazonaws.com/webapp:website-1.0
+ - test
 
 deploy:
-  stage: deploy
-  image: ubuntu:20.04
-  before_script:
-    - pip install docker
+  stage: test
   script:
-    - ansible-playbook --private-key $SSH_PRIVATE_KEY playbook.yml
+    - echo "yes"
