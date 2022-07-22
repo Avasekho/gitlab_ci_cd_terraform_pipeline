@@ -4,10 +4,10 @@ stages:
   - deploy
 
 terraform_build:
-  image: hashicorp/terraform:latest
   stage: set_up_infrastructure
   before_script:
     - terraform init
+    - cp $SSH_PRIVATE_KEY ./us-east-1-key.pem
   script:
     - terraform plan
     - terraform apply -auto-approve
