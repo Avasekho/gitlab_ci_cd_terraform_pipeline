@@ -14,7 +14,7 @@
       state: present
 
   - name: Retrieve AWS authentication token
-    shell: "aws ecr get-login --no-include-email --region us-east-1 | xargs"
+    shell: "aws ecr get-login --no-include-email --region us-east-1 | bash"
 
   - name: deploy container
     docker_container:
@@ -23,4 +23,4 @@
       state: started
       restart: yes
       ports:
-       - "80:80"
+      - "80:80"
