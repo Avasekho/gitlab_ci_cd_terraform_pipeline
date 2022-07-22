@@ -1,33 +1,37 @@
-# This file is a template, and might need editing before it works on your project.
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Terraform.gitlab-ci.yml
-
-include:
-  - template: Terraform/Base.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.gitlab-ci.yml
-  - template: Jobs/SAST-IaC.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
-
 stages:
   - validate
-  - test
-  - build
+  - set_up_infrastructure
+  - build_image
   - deploy
 
-fmt:
-  extends: .terraform:fmt
-  needs: []
+terraform_init:
+  stage: validate
+  before_script:
+    - apt-get update -y && apt-get install awscli ansible docker.io python3-pip -y
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+	- export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+  script:
+    - terraform init
+	- terraform plan
 
-validate:
-  extends: .terraform:validate
-  needs: []
+terraform_build:
+  stage: set_up_infrastructure
+  before_script:
+    - cp $SSH_PRIVATE_KEY ./us-east-1-key.pem
+  script:
+    - terraform apply
 
-build:
-  extends: .terraform:build
+build_image:
+  stage: build_image
+  before_script:
+  	- aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 373000727222.dkr.ecr.us-east-1.amazonaws.com
+  script:
+    - docker build -t 373000727222.dkr.ecr.us-east-1.amazonaws.com/webapp:website-1.0 .
+	- docker push 373000727222.dkr.ecr.us-east-1.amazonaws.com/webapp:website-1.0
 
 deploy:
-  extends: .terraform:deploy
-  dependencies:
-    - build
-  environment:
-    name: $TF_STATE_NAME
+  stage: deploy
+  before_script:
+  	- pip install docker
+  script:
+    - ansible-playbook --private-key $SSH_PRIVATE_KEY playbook.yml
