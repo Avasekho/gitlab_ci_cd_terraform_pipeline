@@ -18,9 +18,9 @@
 
   - name: deploy container
     docker_container:
-    name: webapp
-    image: 373000727222.dkr.ecr.us-east-1.amazonaws.com/webapp:website-1.0
-    state: started
-    restart: yes
-    ports:
-     - "80:80"
+      name: webapp
+      image: 373000727222.dkr.ecr.us-east-1.amazonaws.com/webapp:website-1.0
+      state: started
+      restart: yes
+      ports:
+       - "80:80"
