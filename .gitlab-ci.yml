@@ -1,26 +1,26 @@
 stages:
-  - validate
   - set_up_infrastructure
   - build_image
   - deploy
 
-terraform_init:
-  stage: validate
-  before_script:
-    - apt-get update -y && apt-get install awscli ansible docker.io python3-pip -y
-  script:
-    - terraform init
-    - terraform plan
-
 terraform_build:
+  image: hashicorp/terraform:latest
   stage: set_up_infrastructure
   before_script:
     - cp $SSH_PRIVATE_KEY ./us-east-1-key.pem
   script:
-    - terraform apply
-
+    - terraform init
+    - terraform plan
+    - terraform apply -auto-approve
+  artifacts:
+    paths:
+      - inventory
+  
 build_image:
   stage: build_image
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
   before_script:
     - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 373000727222.dkr.ecr.us-east-1.amazonaws.com
   script:
@@ -29,6 +29,7 @@ build_image:
 
 deploy:
   stage: deploy
+  image: ubuntu:20.04
   before_script:
     - pip install docker
   script:
