@@ -5,11 +5,12 @@ stages:
 
 terraform_build:
   image: hashicorp/terraform:latest
+  entrypoint: [""]
   stage: set_up_infrastructure
   before_script:
+    - terraform init
     - cp $SSH_PRIVATE_KEY ./us-east-1-key.pem
   script:
-    - terraform init
     - terraform plan
     - terraform apply -auto-approve
   artifacts:
