@@ -5,7 +5,6 @@ stages:
 
 terraform_build:
   image: hashicorp/terraform:latest
-  entrypoint: [""]
   stage: set_up_infrastructure
   before_script:
     - terraform init
