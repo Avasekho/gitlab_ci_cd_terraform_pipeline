@@ -12,6 +12,9 @@ terraform_build:
     - terraform init
     - terraform plan
     - terraform apply -auto-approve
+  artifacts:
+    paths:
+      - inventory
 
 build_image:
   stage: build_image
@@ -23,7 +26,5 @@ build_image:
 
 deploy:
   stage: deploy
-  before_script:
-    - pip install docker
   script:
     - ansible-playbook --private-key $SSH_PRIVATE_KEY playbook.yml
