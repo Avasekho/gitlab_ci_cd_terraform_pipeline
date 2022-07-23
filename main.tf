@@ -79,7 +79,7 @@ resource "aws_security_group" "open_ports_22_80" {
 # Create a load balancer (classic)
 resource "aws_elb" "web_elb" {
   name               = "web-server-elb"
-  availability_zones = ["us-east-1a", "us-east-1b"]
+  availability_zones = ["us-east-1a"]
 
 # no https due to lack of domain certificate
   listener {
